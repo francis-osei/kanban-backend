@@ -1,0 +1,23 @@
+{
+    "compilerOptions": {
+        "strict": true,
+        "target": "ESNext",
+        "experimentalDecorators": true,
+        "emitDecoratorMetadata": true,
+        "sourceMap": true,
+        "module": "CommonJS",
+        "moduleResolution": "node",
+        "esModuleInterop": true,
+        "rootDir": "src",
+        "outDir": "dist",
+        "allowJs": true,
+        "checkJs": false,
+        "resolveJsonModule": true,
+        "forceConsistentCasingInFileNames": true,
+        "noUnusedParameters": true,
+        "noUnusedLocals": true
+    },
+    "include": ["src/**/*","./global.d.ts"],
+    "exclude": ["node_modules"],
+    "typeRoots": ["./global.d.ts", "./node_modules/@types"]
+}
