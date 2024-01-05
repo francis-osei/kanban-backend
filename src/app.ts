@@ -3,6 +3,9 @@ import dotenv from 'dotenv';
 import morgan from 'morgan';
 import cors from 'cors';
 import cookieParser from 'cookie-parser';
+import mongoSanitize from 'express-mongo-sanitize';
+
+import logger from './logger/logs';
 
 const app = express();
 dotenv.config();
@@ -15,7 +18,10 @@ app.use(express.urlencoded({ extended: true }));
 
 app.use(cookieParser());
 
+app.use(mongoSanitize());
+
 if (process.env.NODE_ENV === 'development') {
+    logger.info(process.env.NODE_ENV);
     app.use(morgan('dev'));
 }
 
