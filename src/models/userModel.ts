@@ -1,5 +1,6 @@
 import mongoose, { Document } from 'mongoose';
 import validator from 'validator';
+import bcrypt from 'bcryptjs';
 
 export interface UserInput {
     photo: string;
@@ -62,6 +63,21 @@ const userSchema = new mongoose.Schema<UserInput>(
     },
     { timestamps: true }
 );
+
+userSchema.pre('save', async function (this: UserDocument, next) {
+    if (!this.isModified('password')) return next();
+
+    const password = this.password;
+    const saltRound: number = Number(process.env.SALT_ROUND) ?? '';
+    const generateSalt = await bcrypt.genSalt(saltRound);
+
+    const hashedPassword = bcrypt.hashSync(password, generateSalt);
+
+    this.password = hashedPassword;
+    this.confirmPassword = undefined;
+
+    next();
+});
 
 const User = mongoose.model<UserInput>('User', userSchema);
 
