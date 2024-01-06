@@ -3,7 +3,11 @@ import { Request } from 'express';
 
 import AppError from '../utils/appError';
 
-const multerStorage = multer.memoryStorage();
+const multerStorage = multer.diskStorage({
+    filename: function (_req: Request, file, cb) {
+        cb(null, file.originalname);
+    },
+});
 
 const multerFilter = (
     _req: Request,
