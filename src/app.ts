@@ -5,6 +5,7 @@ import cors from 'cors';
 import cookieParser from 'cookie-parser';
 import mongoSanitize from 'express-mongo-sanitize';
 
+import userRouter from "./routes/userRoutes"
 import logger from './logger/logs';
 
 const app = express();
@@ -28,5 +29,7 @@ if (process.env.NODE_ENV === 'development') {
 app.get('/', (_req: Request, res: Response) => {
     res.send('Express server running');
 });
+
+app.use('/api', userRouter)
 
 export default app;
