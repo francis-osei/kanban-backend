@@ -13,7 +13,7 @@ export const uploadPhoto = catchAsync(
         }
         const randomString = crypto.randomBytes(10).toString('hex');
 
-        const fileName = `user-${randomString}-${Date.now()}.jpeg`;
+        const fileName = `user-${randomString}-${Date.now()}`;
 
         const response = await cloudinary.uploader.upload(req.file?.path, {
             folder: 'kanban/users',
