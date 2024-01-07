@@ -34,7 +34,7 @@ class Email {
             firstName:
                 this.firstName.charAt(0).toUpperCase() +
                 this.firstName.slice(1),
-
+            email: this.to,
             url: this.url,
             subject,
         });
