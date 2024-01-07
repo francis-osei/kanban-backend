@@ -5,7 +5,7 @@ import cors from 'cors';
 import cookieParser from 'cookie-parser';
 import mongoSanitize from 'express-mongo-sanitize';
 
-import userRouter from './routes/userRoutes';
+import userRouter from './routes/authRoutes';
 import globalErrorHandler from './controllers/errorController';
 import logger from './logger/logs';
 import AppError from './utils/appError';
