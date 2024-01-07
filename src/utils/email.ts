@@ -14,7 +14,7 @@ class Email {
         this.to = user.email;
         this.firstName = user.fullName.split(' ')[0];
         this.url = url;
-        this.from = `ONXY Team`;
+        this.from = `Kanban Team`;
     }
 
     newTransport() {
