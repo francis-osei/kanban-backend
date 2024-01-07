@@ -1,3 +1,5 @@
+import crypto from 'crypto';
+
 import mongoose, { Document } from 'mongoose';
 import validator from 'validator';
 import bcrypt from 'bcryptjs';
@@ -11,6 +13,10 @@ export interface UserInput {
     passwordChangedAt?: Date | number;
     passwordResetToken?: string | null;
     passwordResetExpires: Date;
+}
+
+export interface UserMethods extends UserInput, Document {
+    createPasswordResetToken: () => string;
 }
 
 export interface UserDocument extends UserInput, Document {
@@ -60,6 +66,10 @@ const userSchema = new mongoose.Schema<UserInput>(
                 message: 'Passwords are not the same',
             },
         },
+
+        passwordChangedAt: Date,
+        passwordResetToken: String,
+        passwordResetExpires: Date,
     },
     { timestamps: true }
 );
@@ -78,6 +88,20 @@ userSchema.pre('save', async function (this: UserDocument, next) {
 
     next();
 });
+
+userSchema.methods.createPasswordResetToken = function () {
+    const resetToken = crypto.randomBytes(32).toString('hex');
+
+    this.passwordResetToken = crypto
+        .createHash('sha256')
+        .update(resetToken)
+        .digest('hex');
+
+    const tenMimutes = 10 * 60 * 1000;
+    this.passwordResetExpires = Date.now() + tenMimutes;
+
+    return resetToken;
+};
 
 const User = mongoose.model<UserInput>('User', userSchema);
 

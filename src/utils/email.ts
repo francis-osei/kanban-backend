@@ -58,7 +58,7 @@ class Email {
         await this.send('welcome', 'Welcome to Kanban');
     }
 
-    async passwordReset() {
+    async sendPasswordReset() {
         await this.send(
             'passwordReset',
             'Reset Your Password (valid for 10 minutes)'

@@ -15,3 +15,19 @@ export const sendVerificationMail = async (
         500
     );
 };
+
+export const sendResetPasswordMail = async (
+    user: UserInput,
+    resetToken: string
+) => {
+    const resetURL = `${process.env.FRONT_END_URL}api/auth/resetPassword/${resetToken}`;
+
+    const response = await new Email(user, resetURL).sendPasswordReset();
+
+    if (response === undefined) return true;
+
+    return new AppError(
+        'could not send email. username and password not accepted',
+        500
+    );
+};
