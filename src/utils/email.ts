@@ -54,6 +54,10 @@ class Email {
         await this.send('verification', 'Verify your account');
     }
 
+    async sendWelcome() {
+        await this.send('welcome', 'Welcome to Kanban');
+    }
+
     async passwordReset() {
         await this.send(
             'passwordReset',
