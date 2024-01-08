@@ -31,3 +31,14 @@ export const sendResetPasswordMail = async (
         500
     );
 };
+
+export const sendWelcomeMail = async (user: UserInput) => {
+    const response = await new Email(user, undefined).sendWelcome();
+
+    if (response === undefined) return true;
+
+    return new AppError(
+        'could not send email. username and password not accepted',
+        500
+    );
+};

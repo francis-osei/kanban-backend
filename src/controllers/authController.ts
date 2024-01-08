@@ -7,13 +7,17 @@ import AppError from '../utils/appError';
 import {
     createAdmin,
     findUserByEmail,
+    loginUser,
     passwordResetToken,
 } from '../services/userServices';
 import {
     sendResetPasswordMail,
     sendVerificationMail,
+    sendWelcomeMail,
 } from '../services/emailServices';
 import { UserMethods } from '../models/userModel';
+import { createToken } from '../utils/helpers';
+// import { createToken } from '../utils/helpers';
 
 export const uploadPhoto = catchAsync(
     async (req: Request, res: Response, next: NextFunction) => {
@@ -61,6 +65,41 @@ export const registerAdmin = catchAsync(
         res.status(201).json({
             status: 'success',
             message: 'Registration successful. Welcome aboard!',
+        });
+    }
+);
+
+export const login = catchAsync(
+    async (req: Request, res: Response, next: NextFunction) => {
+        const { email, password } = req.body;
+
+        const user: UserMethods | AppError = await loginUser(email, password);
+
+        if (user instanceof AppError) {
+            return next(new AppError(user.message, user.statusCode));
+        }
+
+        let response;
+        if (!user.isFirstTimeLogin) {
+            response = await sendWelcomeMail(user);
+        }
+
+        user.isFirstTimeLogin = true;
+        await user.save({ validateBeforeSave: false });
+        
+        user.password = undefined;
+
+        if (response instanceof AppError) {
+            return next(new AppError(response.message, response.statusCode));
+        }
+
+        const userId = user._id;
+        const token = createToken(userId, res);
+
+        res.status(200).json({
+            status: 'success',
+            token,
+            data: { user },
         });
     }
 );

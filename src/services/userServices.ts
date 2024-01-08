@@ -7,6 +7,26 @@ export const createAdmin = async (input: UserInput): Promise<UserInput> => {
     return user;
 };
 
+export const loginUser = async (
+    email: string,
+    password: string
+): Promise<UserMethods | AppError> => {
+    if (!email || !password) {
+        return new AppError('Please provide an email or password', 400);
+    }
+
+    const user: UserMethods = await UserModel.findOne({ email }).select(
+        '+password'
+    );
+
+    if (!user || !(await user.comparePasswords(password, user.password))) {
+        return new AppError('Incorrect email or password', 401);
+    }
+
+
+    return user;
+};
+
 export const findUserByEmail = async (
     email: string
 ): Promise<UserMethods | AppError> => {

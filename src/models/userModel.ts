@@ -8,15 +8,21 @@ export interface UserInput {
     photo: string;
     fullName: string;
     email: string;
-    password: string;
+    password: string | undefined;
     confirmPassword: string | undefined;
+    isFirstTimeLogin: boolean;
     passwordChangedAt?: Date | number;
     passwordResetToken?: string | null;
     passwordResetExpires: Date;
 }
 
 export interface UserMethods extends UserInput, Document {
+    _id: string;
     createPasswordResetToken: () => string;
+    comparePasswords: (
+        candidatePassword: string,
+        userPassword: string | undefined
+    ) => Promise<boolean>;
 }
 
 export interface UserDocument extends UserInput, Document {
@@ -67,6 +73,7 @@ const userSchema = new mongoose.Schema<UserInput>(
             },
         },
 
+        isFirstTimeLogin: { type: Boolean, default: false },
         passwordChangedAt: Date,
         passwordResetToken: String,
         passwordResetExpires: Date,
@@ -77,8 +84,8 @@ const userSchema = new mongoose.Schema<UserInput>(
 userSchema.pre('save', async function (this: UserDocument, next) {
     if (!this.isModified('password')) return next();
 
-    const password = this.password;
-    const saltRound: number = Number(process.env.SALT_ROUND) ?? '';
+    const password = this.password as string;
+    const saltRound: number = Number(process.env.SALT_ROUND) || 0;
     const generateSalt = await bcrypt.genSalt(saltRound);
 
     const hashedPassword = bcrypt.hashSync(password, generateSalt);
@@ -101,6 +108,13 @@ userSchema.methods.createPasswordResetToken = function () {
     this.passwordResetExpires = Date.now() + tenMimutes;
 
     return resetToken;
+};
+
+userSchema.methods.comparePasswords = async function (
+    candidatePassword: string,
+    userPassword: string
+) {
+    return await bcrypt.compare(candidatePassword, userPassword);
 };
 
 const User = mongoose.model<UserInput>('User', userSchema);
