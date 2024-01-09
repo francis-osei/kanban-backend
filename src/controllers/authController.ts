@@ -7,8 +7,10 @@ import AppError from '../utils/appError';
 import {
     createAdmin,
     findUserByEmail,
+    findUserByObject,
     loginUser,
     passwordResetToken,
+    saveNewPassword,
 } from '../services/userServices';
 import {
     sendResetPasswordMail,
@@ -86,7 +88,7 @@ export const login = catchAsync(
 
         user.isFirstTimeLogin = true;
         await user.save({ validateBeforeSave: false });
-        
+
         user.password = undefined;
 
         if (response instanceof AppError) {
@@ -129,6 +131,43 @@ export const forgotPassword = catchAsync(
         res.status(200).json({
             status: 'success',
             message: 'Send reset password instructions to the provided email',
+        });
+    }
+);
+
+export const resetPassword = catchAsync(
+    async (req: Request, res: Response, next: NextFunction) => {
+        const { token } = req.params;
+
+        const { password, confirmPassword } = req.body;
+
+        const hashToken = crypto
+            .createHash('sha256')
+            .update(token)
+            .digest('hex');
+
+        type PasswordResetQuery = {
+            passwordResetToken: string;
+            passwordResetExpires: { $gt: Date };
+        };
+
+        const query: PasswordResetQuery = {
+            passwordResetToken: hashToken,
+            passwordResetExpires: { $gt: new Date(Date.now()) },
+        };
+
+        const user = await findUserByObject(query);
+
+        if (user instanceof AppError)
+            return next(new AppError(user.message, user.statusCode));
+
+        const inputPassword = { password, confirmPassword };
+
+        await saveNewPassword(inputPassword, user);
+
+        res.status(200).json({
+            status: 'success',
+            message: 'Password reset was successful',
         });
     }
 );

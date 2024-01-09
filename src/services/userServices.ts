@@ -1,3 +1,4 @@
+import { Document, Types } from 'mongoose';
 import UserModel, { UserInput, UserMethods } from '../models/userModel';
 import AppError from '../utils/appError';
 
@@ -23,7 +24,6 @@ export const loginUser = async (
         return new AppError('Incorrect email or password', 401);
     }
 
-
     return user;
 };
 
@@ -41,4 +41,26 @@ export const findUserByEmail = async (
 
 export const passwordResetToken = (user: UserMethods): string => {
     return user.createPasswordResetToken();
+};
+
+export const findUserByObject = async (query: Partial<UserInput>) => {
+    const user = await UserModel.findOne(query);
+
+    if (!user) return new AppError('Token is invalid or has expired', 400);
+
+    return user;
+};
+
+export const saveNewPassword = async (
+    inputPassword: { password: string; confirmPassword: string },
+    user: Document<unknown, object, UserInput> &
+        UserInput & {
+            _id: Types.ObjectId;
+        }
+) => {
+    user.password = inputPassword.password;
+    user.confirmPassword = inputPassword.confirmPassword;
+    user.passwordResetExpires = null;
+    user.passwordResetToken = null;
+    await user.save();
 };

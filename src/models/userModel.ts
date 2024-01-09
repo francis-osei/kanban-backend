@@ -13,7 +13,7 @@ export interface UserInput {
     isFirstTimeLogin: boolean;
     passwordChangedAt?: Date | number;
     passwordResetToken?: string | null;
-    passwordResetExpires: Date;
+    passwordResetExpires: Date | { $gt: Date } | null;
 }
 
 export interface UserMethods extends UserInput, Document {
