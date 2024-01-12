@@ -10,6 +10,10 @@ export interface UserInput {
     email: string;
     password: string | undefined;
     confirmPassword: string | undefined;
+    specialization: string;
+    status: string;
+    aboutMe: string;
+    rank: string;
     isFirstTimeLogin: boolean;
     passwordChangedAt?: Date | number;
     passwordResetToken?: string | null;
@@ -73,6 +77,15 @@ const userSchema = new mongoose.Schema<UserInput>(
             },
         },
 
+        status: {
+            type: String,
+            enum: ['inactive', 'active'],
+            default: 'inactive',
+        },
+
+        specialization: { type: String, trim: true, lowerCase: true },
+        rank: { type: String, trim: true, lowerCase: true },
+        aboutMe: { type: String, trim: true, lowerCase: true },
         isFirstTimeLogin: { type: Boolean, default: false },
         passwordChangedAt: Date,
         passwordResetToken: String,
