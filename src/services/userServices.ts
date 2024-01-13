@@ -64,3 +64,9 @@ export const saveNewPassword = async (
     user.passwordResetToken = null;
     await user.save();
 };
+
+export const createUser = async (input: Partial<UserInput>) => {
+    const user = await UserModel.create(input);
+
+    return user;
+};
