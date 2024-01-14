@@ -5,7 +5,7 @@ import cors from 'cors';
 import cookieParser from 'cookie-parser';
 import mongoSanitize from 'express-mongo-sanitize';
 
-import userRouter from './routes/authRoutes';
+import authRouter from './routes/authRoutes';
 import globalErrorHandler from './controllers/errorController';
 import logger from './logger/logs';
 import AppError from './utils/appError';
@@ -32,7 +32,7 @@ app.get('/', (_req: Request, res: Response) => {
     res.send('Express server running');
 });
 
-app.use('/api', userRouter);
+app.use('/api', authRouter);
 
 app.all('*', (req: Request, _res: Response, next: NextFunction) => {
     next(new AppError(`can't find ${req.originalUrl} on this server`, 404));
