@@ -13,6 +13,7 @@ export interface UserInput {
     specialization: string;
     status: string;
     aboutMe: string;
+    role: string;
     rank: string;
     isFirstTimeLogin: boolean;
     passwordChangedAt?: Date | number;
@@ -75,6 +76,12 @@ const userSchema = new mongoose.Schema<UserInput>(
                 },
                 message: 'Passwords are not the same',
             },
+        },
+
+        role: {
+            type: String,
+            enum: ['admin', 'user'],
+            default: 'user',
         },
 
         status: {
