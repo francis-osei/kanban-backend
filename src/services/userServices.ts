@@ -1,3 +1,5 @@
+import crypto from 'crypto';
+
 import { Document, Types } from 'mongoose';
 import UserModel, { UserInput, UserMethods } from '../models/userModel';
 import AppError from '../utils/appError';
@@ -66,7 +68,15 @@ export const saveNewPassword = async (
 };
 
 export const createUser = async (input: Partial<UserInput>) => {
-    const user = await UserModel.create(input);
+    const radnomPassword = crypto.randomBytes(10).toString('hex');
+
+    const user = new UserModel({
+        ...input,
+        password: radnomPassword,
+        confirmPassword: radnomPassword,
+    });
+
+    await user.save();
 
     return user;
 };
