@@ -1,0 +1,22 @@
+extends baseEmail
+
+block content
+
+    tr
+        td.pb-30
+            p.paragraph Hi #{firstName},
+            p.paragraph
+                | You are invited to join our project management app
+                | as an admin. Together, let&apos;s streamline project
+                | workflows and achieve success.
+    tr
+        td.pb-34
+            p.paragraph
+                | Click on the button to verify your account.
+    tr
+        td.pd-17
+            p.paragraph Thanks.
+            p.paragraph Kanban team.
+    tr
+        td.btn-box(align='center')
+            a.btn(href=`${url}`) Verify account   
