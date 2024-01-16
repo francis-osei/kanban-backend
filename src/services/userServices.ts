@@ -80,3 +80,14 @@ export const createUser = async (input: Partial<UserInput>) => {
 
     return user;
 };
+
+export const removeUser = async (id: string): Promise<boolean | AppError> => {
+    const user = await UserModel.deleteOne({
+        _id: id,
+        role: 'user',
+    });
+
+    if (user.deletedCount) return true;
+
+    return new AppError('could not delete user', 500);
+};
