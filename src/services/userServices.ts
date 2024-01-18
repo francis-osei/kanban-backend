@@ -121,11 +121,13 @@ export const updateUser = async (
     return user;
 };
 
-export const getAllUsers = async () => {
+export const getAllUsers = async (): Promise<
+    UserInput[] | { message: string }
+> => {
     const users = await UserModel.find({ role: 'user' });
 
     if (users.length === 0) {
-        return 'There are no users';
+        return { message: 'There are no users' };
     }
 
     return users;

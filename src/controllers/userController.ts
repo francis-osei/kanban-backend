@@ -1,8 +1,14 @@
 import { NextFunction, Request, Response } from 'express';
 
-import { createUser, removeUser, updateUser } from '../services/userServices';
+import {
+    createUser,
+    getAllUsers,
+    removeUser,
+    updateUser,
+} from '../services/userServices';
 import catchAsync from '../utils/catchAsync';
 import AppError from '../utils/appError';
+import { UserInput } from '../models/userModel';
 
 export const createNewUser = catchAsync(async (req: Request, res: Response) => {
     const user = await createUser(req.body);
@@ -51,3 +57,24 @@ export const renewUser = catchAsync(
         });
     }
 );
+
+const isMessage = (
+    input: UserInput[] | { message: string }
+): input is { message: string } => {
+    return (input as { message: string }).message !== undefined;
+};
+
+export const allUsers = catchAsync(async (_req: Request, res: Response) => {
+    const users = await getAllUsers();
+
+    const results =
+        typeof users === 'object' ? (users as UserInput[]).length : 0;
+
+    const data = isMessage(users) ? users.message : users;
+
+    res.status(200).json({
+        status: 'success',
+        results,
+        data,
+    });
+});
