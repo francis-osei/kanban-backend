@@ -91,3 +91,32 @@ export const removeUser = async (id: string): Promise<boolean | AppError> => {
 
     return new AppError('could not delete user', 500);
 };
+
+export const updateUser = async (
+    userId: string,
+    requestBody: Partial<UserInput>
+) => {
+    const currentUser = await UserModel.findOne({ _id: userId, role: 'user' });
+
+    if (currentUser === null) {
+        return new AppError('User not found', 404);
+    }
+
+    const update = {
+        fullName: requestBody.fullName,
+        email: requestBody.email,
+        specialization: requestBody.specialization,
+        rank: requestBody.rank,
+    };
+
+    const user = await UserModel.findByIdAndUpdate(
+        { _id: currentUser.id },
+        update,
+        {
+            new: true,
+            runValidators: true,
+        }
+    );
+
+    return user;
+};
