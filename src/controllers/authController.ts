@@ -90,6 +90,7 @@ export const login = catchAsync(
         await user.save({ validateBeforeSave: false });
 
         user.password = undefined;
+        user.isFirstTimeLogin = undefined;
 
         if (response instanceof AppError) {
             return next(new AppError(response.message, response.statusCode));

@@ -19,7 +19,7 @@ export const loginUser = async (
     }
 
     const user: UserMethods = await UserModel.findOne({ email }).select(
-        '+password'
+        '+password +isFirstTimeLogin -createdAt -updatedAt -status -__v'
     );
 
     if (!user || !(await user.comparePasswords(password, user.password))) {
@@ -124,7 +124,9 @@ export const updateUser = async (
 export const getAllUsers = async (): Promise<
     UserInput[] | { message: string }
 > => {
-    const users = await UserModel.find({ role: 'user' });
+    const users = await UserModel.find({ role: 'user' }).select(
+        '-isFirstTimeLogin -createdAt -updatedAt -__v'
+    );
 
     if (users.length === 0) {
         return { message: 'There are no users' };
