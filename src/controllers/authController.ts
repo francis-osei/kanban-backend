@@ -19,7 +19,7 @@ import {
 } from '../services/emailServices';
 import { UserMethods } from '../models/userModel';
 import { createToken } from '../utils/helpers';
-// import { createToken } from '../utils/helpers';
+
 
 export const uploadPhoto = catchAsync(
     async (req: Request, res: Response, next: NextFunction) => {
