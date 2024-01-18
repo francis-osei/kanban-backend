@@ -149,4 +149,3 @@ export const getUser = async (
     return user;
 };
 
-getUser('65a943bba9bb9750bcac3f11');
