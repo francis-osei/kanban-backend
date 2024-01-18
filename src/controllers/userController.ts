@@ -11,7 +11,7 @@ import catchAsync from '../utils/catchAsync';
 import AppError from '../utils/appError';
 import { UserInput } from '../models/userModel';
 
-export const createNewUser = catchAsync(async (req: Request, res: Response) => {
+export const addUser = catchAsync(async (req: Request, res: Response) => {
     const response = await createUser(req.body);
 
     res.status(200).json({
