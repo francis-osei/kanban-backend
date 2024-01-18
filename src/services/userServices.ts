@@ -1,7 +1,7 @@
 import crypto from 'crypto';
 
 import { Document, Types } from 'mongoose';
-import UserModel, { UserInput, UserMethods } from '../models/userModel';
+import UserModel, {UserInput, UserMethods } from '../models/userModel';
 import AppError from '../utils/appError';
 
 export const createAdmin = async (input: UserInput): Promise<UserInput> => {
@@ -95,7 +95,7 @@ export const removeUser = async (id: string): Promise<boolean | AppError> => {
 export const updateUser = async (
     userId: string,
     requestBody: Partial<UserInput>
-) => {
+): Promise<UserInput | AppError| null> => {
     const currentUser = await UserModel.findOne({ _id: userId, role: 'user' });
 
     if (currentUser === null) {
