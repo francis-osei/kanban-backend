@@ -3,6 +3,7 @@ import { NextFunction, Request, Response } from 'express';
 import {
     createUser,
     getAllUsers,
+    getUser,
     removeUser,
     updateUser,
 } from '../services/userServices';
@@ -78,3 +79,20 @@ export const allUsers = catchAsync(async (_req: Request, res: Response) => {
         data,
     });
 });
+
+export const retrieveUser = catchAsync(
+    async (req: Request, res: Response, next: NextFunction) => {
+        const userId = req.params.id;
+
+        const response = await getUser(userId);
+
+        if (response instanceof AppError) {
+            return next(new AppError(response.message, response.statusCode));
+        }
+
+        res.status(200).json({
+            status: 'success',
+            data: { user: response },
+        });
+    }
+);
