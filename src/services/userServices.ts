@@ -134,3 +134,19 @@ export const getAllUsers = async (): Promise<
 
     return users;
 };
+
+export const getUser = async (
+    userId: string
+): Promise<UserInput | AppError> => {
+    const user = await UserModel.findOne({ _id: userId, role: 'user' }).select(
+        '-isFirstTimeLogin -createdAt -updatedAt -__v'
+    );
+
+    if (user === null) {
+        return new AppError('User not found', 404);
+    }
+
+    return user;
+};
+
+getUser('65a943bba9bb9750bcac3f11');
