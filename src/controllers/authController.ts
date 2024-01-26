@@ -1,17 +1,11 @@
-import { NextFunction, Request, Response } from 'express';
 import crypto from 'crypto';
+
+import { NextFunction, Request, Response } from 'express';
 import cloudinary from '../configs/cloundinaryConfig';
 
 import catchAsync from '../utils/catchAsync';
 import AppError from '../utils/appError';
-import {
-    createAdmin,
-    findUserByEmail,
-    findUserByObject,
-    loginUser,
-    passwordResetToken,
-    saveNewPassword,
-} from '../services/userServices';
+import { findUserByEmail, findUserByObject } from '../services/userServices';
 import {
     sendResetPasswordMail,
     sendVerificationMail,
@@ -19,7 +13,12 @@ import {
 } from '../services/emailServices';
 import { UserMethods } from '../models/userModel';
 import { createToken } from '../utils/helpers';
-
+import { loginUser } from '../services/authServices';
+import { createAdmin } from '../services/adminServices';
+import {
+    passwordResetToken,
+    saveNewPassword,
+} from '../services/passwordServices';
 
 export const uploadPhoto = catchAsync(
     async (req: Request, res: Response, next: NextFunction) => {
