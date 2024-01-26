@@ -23,7 +23,7 @@ export const findUserByObject = async (query: Partial<UserInput>) => {
     return user;
 };
 
-export const createUser = async (input: Partial<UserInput>) => {
+export const addNewUser = async (input: Partial<UserInput>) => {
     const radnomPassword = crypto.randomBytes(10).toString('hex');
 
     const user = new UserModel({

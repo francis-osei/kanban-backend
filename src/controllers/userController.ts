@@ -1,7 +1,7 @@
 import { NextFunction, Request, Response } from 'express';
 
 import {
-    createUser,
+    addNewUser,
     getAllUsers,
     getUser,
     removeUser,
@@ -12,7 +12,7 @@ import AppError from '../utils/appError';
 import { UserInput } from '../models/userModel';
 
 export const addUser = catchAsync(async (req: Request, res: Response) => {
-    const response = await createUser(req.body);
+    const response = await addNewUser(req.body);
 
     res.status(200).json({
         status: 'success',
