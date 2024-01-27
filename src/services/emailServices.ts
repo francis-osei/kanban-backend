@@ -42,3 +42,17 @@ export const sendWelcomeMail = async (user: UserInput) => {
         500
     );
 };
+
+export const sendClaimAccountMail = async (
+    user: UserInput,
+    radnomPassword: string
+) => {
+    const url = '';
+    const response = await new Email(user, url, {
+        radnomPassword,
+    }).sendClaimAccount();
+
+    if (response === undefined) return true;
+
+    return new AppError('could not send email', 500);
+};

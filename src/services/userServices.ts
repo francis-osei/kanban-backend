@@ -26,15 +26,13 @@ export const findUserByObject = async (query: Partial<UserInput>) => {
 export const addNewUser = async (input: Partial<UserInput>) => {
     const radnomPassword = crypto.randomBytes(10).toString('hex');
 
-    const user = new UserModel({
+    const user = await UserModel.create({
         ...input,
         password: radnomPassword,
         confirmPassword: radnomPassword,
     });
 
-    await user.save();
-
-    return user;
+    return { user, radnomPassword };
 };
 
 export const removeUser = async (id: string): Promise<boolean | AppError> => {

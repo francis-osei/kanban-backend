@@ -10,15 +10,24 @@ import {
 import catchAsync from '../utils/catchAsync';
 import AppError from '../utils/appError';
 import { UserInput } from '../models/userModel';
+import { sendClaimAccountMail } from '../services/emailServices';
 
-export const addUser = catchAsync(async (req: Request, res: Response) => {
-    const response = await addNewUser(req.body);
+export const addUser = catchAsync(
+    async (req: Request, res: Response, next: NextFunction) => {
+        const { user, radnomPassword } = await addNewUser(req.body);
+        radnomPassword;
+        const response = sendClaimAccountMail(user, radnomPassword);
 
-    res.status(200).json({
-        status: 'success',
-        data: { user: response },
-    });
-});
+        if (response instanceof AppError) {
+            return next(new AppError(response.message, response.statusCode));
+        }
+
+        res.status(200).json({
+            status: 'success',
+            data: { user },
+        });
+    }
+);
 
 export const deleteUser = catchAsync(
     async (req: Request, res: Response, next: NextFunction) => {
