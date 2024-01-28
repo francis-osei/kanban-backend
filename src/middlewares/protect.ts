@@ -4,13 +4,18 @@ import catchAsync from '../utils/catchAsync';
 import AppError from '../utils/appError';
 import jwt, { JwtPayload } from 'jsonwebtoken';
 import UserModel, { UserInput } from '../models/userModel';
+import { RequestWithUser } from '../middlewares/restrictTo';
 
 interface AuthenticatedRequest extends Request {
     user: UserInput;
 }
 
 const protect = catchAsync(
-    async (req: Request, _res: Response, next: NextFunction) => {
+    async (
+        req: Request | RequestWithUser,
+        _res: Response,
+        next: NextFunction
+    ) => {
         const token = req.cookies.jwt;
 
         if (!token) {
