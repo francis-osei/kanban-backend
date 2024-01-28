@@ -3,6 +3,11 @@ import { Request, Response, NextFunction } from 'express';
 import AppError from '../utils/appError';
 import logger from '../logger/logs';
 
+const handleCastErrorDB = (err: AppError) => {
+    const message = `Invalid ${err.path}: ${err.value}.`;
+    return new AppError(message, 400);
+};
+
 const handleDuplicateFiedsDB = (err: AppError) => {
     const value = err.message!.match(/(["'])(\\?.)*?\1/)?.[0] || null;
     const message = `Duplicate field value: ${value}. Please use another value`;
@@ -59,6 +64,7 @@ export default (
         let error = { ...err };
         error.message = err.message;
 
+        if (err.name === 'CastError') error = handleCastErrorDB(error);
         if (err.code === 11000) error = handleDuplicateFiedsDB(error);
         if (err.name === 'ValidationError')
             error = handleValidationErrorDB(error);
