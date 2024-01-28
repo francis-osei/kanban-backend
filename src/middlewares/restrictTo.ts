@@ -8,7 +8,7 @@ export interface RequestWithUser extends Request {
     };
 }
 
-const restrictTo = (...roles: string[]) => {
+const restrictTo = (roles: string[]) => {
     return (
         req: Request | RequestWithUser,
         _res: Response,
