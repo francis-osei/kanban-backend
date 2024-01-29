@@ -102,3 +102,9 @@ export const getUser = async (
 
     return user;
 };
+
+export const addBulkUsers = async (bulkInput: Partial<UserInput>[]) => {
+    const users = await UserModel.insertMany(bulkInput);
+
+    return users;
+};
