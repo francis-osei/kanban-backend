@@ -108,3 +108,11 @@ export const addBulkUsers = async (bulkInput: Partial<UserInput>[]) => {
 
     return users;
 };
+
+export const deleteAllUsers = async () => {
+    const deleteUsers = await UserModel.deleteMany({ role: 'user' });
+
+    if (deleteUsers.deletedCount) return true;
+
+    return new AppError('There are no users to be deleted', 500);
+};
