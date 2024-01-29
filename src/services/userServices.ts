@@ -79,7 +79,7 @@ export const getAllUsers = async (): Promise<
     UserInput[] | { message: string }
 > => {
     const users = await UserModel.find({ role: 'user' }).select(
-        '-isFirstTimeLogin -createdAt -updatedAt -__v'
+        '-isFirstTimeLogin -createdAt -updatedAt -confirmPassword -__v'
     );
 
     if (users.length === 0) {
@@ -93,7 +93,7 @@ export const getUser = async (
     userId: string
 ): Promise<UserInput | AppError> => {
     const user = await UserModel.findOne({ _id: userId, role: 'user' }).select(
-        '-isFirstTimeLogin -createdAt -updatedAt -__v'
+        '-isFirstTimeLogin -createdAt -confirmPassword -updatedAt -__v'
     );
 
     if (user === null) {
