@@ -118,6 +118,24 @@ userSchema.pre('save', async function (this: UserDocument, next) {
     next();
 });
 
+userSchema.pre('insertMany', async function (next, docs: UserDocument[]) {
+    await Promise.all(
+        docs.map(async (doc) => {
+            const password = doc.password as string;
+
+            const saltRound: number = Number(process.env.SALT_ROUND) || 0;
+            const generateSalt = await bcrypt.genSalt(saltRound);
+
+            const hashedPassword = bcrypt.hashSync(password, generateSalt);
+
+            doc.password = hashedPassword;
+            doc.confirmPassword = hashedPassword;
+        })
+    );
+
+    next();
+});
+
 userSchema.methods.createPasswordResetToken = function () {
     const resetToken = crypto.randomBytes(32).toString('hex');
 
