@@ -5,6 +5,7 @@ import { NextFunction, Request, Response } from 'express';
 import {
     addBulkUsers,
     addNewUser,
+    deleteAllUsers,
     getAllUsers,
     getUser,
     removeUser,
@@ -133,6 +134,20 @@ export const bulkInput = catchAsync(
             status: 'success',
             result: usersData.length,
             message: 'Bulk input was successful',
+        });
+    }
+);
+
+export const removeAllUsers = catchAsync(
+    async (_req: Request, res: Response, next: NextFunction) => {
+        const response = await deleteAllUsers();
+
+        if (response instanceof AppError)
+            return next(new AppError(response.message, response.statusCode));
+
+        res.status(200).json({
+            status: 'success',
+            message: 'All users deleted successfully',
         });
     }
 );
