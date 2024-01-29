@@ -6,6 +6,7 @@ import {
     deleteUser,
     renewUser,
     retrieveUser,
+    bulkInput,
 } from '../controllers/userController';
 import protect from '../middlewares/protect';
 import restrictTo from '../middlewares/restrictTo';
@@ -18,6 +19,7 @@ router.get('/:id', retrieveUser);
 
 router.use(restrictTo(['admin']));
 router.post('/new', addUser);
+router.post('/bulk', bulkInput);
 router.delete('/:id', deleteUser);
 router.patch('/:id', renewUser);
 

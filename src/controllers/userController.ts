@@ -1,6 +1,9 @@
+import crypto from 'crypto';
+
 import { NextFunction, Request, Response } from 'express';
 
 import {
+    addBulkUsers,
     addNewUser,
     getAllUsers,
     getUser,
@@ -102,6 +105,34 @@ export const retrieveUser = catchAsync(
         res.status(200).json({
             status: 'success',
             data: { user: response },
+        });
+    }
+);
+
+export const bulkInput = catchAsync(
+    async (req: Request, res: Response, next: NextFunction) => {
+        const usersData = req.body;
+
+        if (!usersData.length) {
+            return next(new AppError('Object cannot not empty', 404));
+        }
+
+        const users = usersData.map((user: UserInput) => {
+            const randomPassword = crypto.randomBytes(10).toString('hex');
+
+            return {
+                ...user,
+                password: randomPassword,
+                confirmPassword: randomPassword,
+            };
+        });
+
+        await addBulkUsers(users);
+
+        res.status(200).json({
+            status: 'success',
+            result: usersData.length,
+            message: 'Bulk input was successful',
         });
     }
 );
