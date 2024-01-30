@@ -116,3 +116,16 @@ export const deleteAllUsers = async () => {
 
     return new AppError('There are no users to be deleted', 500);
 };
+
+export const findUserById = async (
+    id: string,
+    selectFields?: string
+): Promise<UserInput | null> => {
+    const query = selectFields
+        ? UserModel.findById(id).select(selectFields)
+        : UserModel.findById(id);
+
+    const user = await query;
+
+    return user;
+};
