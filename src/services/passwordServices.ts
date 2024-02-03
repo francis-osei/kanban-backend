@@ -18,3 +18,16 @@ export const saveNewPassword = async (
 export const passwordResetToken = (user: UserMethods): string => {
     return user.createPasswordResetToken();
 };
+
+export const UpdateWithNewPassword = async (
+    user: Document<unknown, object, UserInput> &
+        UserInput & {
+            _id: Types.ObjectId;
+        },
+    passwords: { newPassword: string; newConfirmPassword: string }
+) => {
+    user.password = passwords.newPassword;
+    user.confirmPassword = passwords.newConfirmPassword;
+
+    await user.save();
+};

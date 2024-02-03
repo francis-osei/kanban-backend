@@ -6,6 +6,7 @@ import {
     addBulkUsers,
     addNewUser,
     deleteAllUsers,
+    findUserById,
     getAllUsers,
     getUser,
     removeUser,
@@ -15,6 +16,7 @@ import catchAsync from '../utils/catchAsync';
 import AppError from '../utils/appError';
 import { UserInput } from '../models/userModel';
 import { sendClaimAccountMail } from '../services/emailServices';
+import { UpdateWithNewPassword } from '../services/passwordServices';
 
 export const addUser = catchAsync(
     async (req: Request, res: Response, next: NextFunction) => {
@@ -148,6 +150,41 @@ export const removeAllUsers = catchAsync(
         res.status(200).json({
             status: 'success',
             message: 'All users deleted successfully',
+        });
+    }
+);
+
+export const updatePassword = catchAsync(
+    async (req: Request, res: Response, next: NextFunction) => {
+        const {
+            oldPassword,
+            password: newPassword,
+            confirmPassword: newConfirmPassword,
+        } = req.body;
+
+        const userId = 'user' in req ? (req.user as { id: string }).id : '';
+
+        const user = await findUserById(
+            userId,
+            '+password -confirmPassword -updatedAt -createdAt'
+        );
+
+        if (user === null) {
+            return;
+        }
+
+        if (!(await user.comparePasswords(oldPassword, user.password))) {
+            return next(new AppError('Incorrect password', 401));
+        }
+
+        await UpdateWithNewPassword(user, {
+            newPassword,
+            newConfirmPassword,
+        });
+
+        res.status(200).json({
+            status: 'success',
+            message: 'Password update was successful',
         });
     }
 );

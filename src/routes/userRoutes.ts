@@ -8,6 +8,7 @@ import {
     retrieveUser,
     bulkInput,
     removeAllUsers,
+    updatePassword,
 } from '../controllers/userController';
 import protect from '../middlewares/protect';
 import restrictTo from '../middlewares/restrictTo';
@@ -17,6 +18,7 @@ const router = express.Router();
 router.use(protect);
 router.get('/', restrictTo(['admin', 'user']), allUsers);
 router.get('/:id', retrieveUser);
+router.patch('/updatePassword', updatePassword);
 
 router.use(restrictTo(['admin']));
 router.post('/new', addUser);

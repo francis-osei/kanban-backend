@@ -2,6 +2,7 @@ import crypto from 'crypto';
 
 import UserModel, { UserInput, UserMethods } from '../models/userModel';
 import AppError from '../utils/appError';
+import { Document, Types } from 'mongoose';
 
 export const findUserByEmail = async (
     email: string
@@ -120,12 +121,25 @@ export const deleteAllUsers = async () => {
 export const findUserById = async (
     id: string,
     selectFields?: string
-): Promise<UserInput | null> => {
+): Promise<
+    | (Document<unknown, object, UserInput> &
+          UserInput &
+          UserMethods & {
+              _id: Types.ObjectId;
+          })
+    | null
+> => {
     const query = selectFields
         ? UserModel.findById(id).select(selectFields)
         : UserModel.findById(id);
 
     const user = await query;
 
-    return user;
+    return user as
+        | (Document<unknown, object, UserInput> &
+              UserInput &
+              UserMethods & {
+                  _id: Types.ObjectId;
+              })
+        | null;
 };
