@@ -24,10 +24,10 @@ export const UpdateWithNewPassword = async (
         UserInput & {
             _id: Types.ObjectId;
         },
-    passwords: { newPassword: string; newConfirmPassword: string }
+    passwords: { password: string; confirmPassword: string }
 ) => {
-    user.password = passwords.newPassword;
-    user.confirmPassword = passwords.newConfirmPassword;
+    user.password = passwords.password;
+    user.confirmPassword = passwords.confirmPassword;
 
     await user.save();
 };

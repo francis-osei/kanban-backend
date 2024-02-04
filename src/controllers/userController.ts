@@ -156,11 +156,7 @@ export const removeAllUsers = catchAsync(
 
 export const updatePassword = catchAsync(
     async (req: Request, res: Response, next: NextFunction) => {
-        const {
-            oldPassword,
-            password: newPassword,
-            confirmPassword: newConfirmPassword,
-        } = req.body;
+        const { oldPassword, password, confirmPassword } = req.body;
 
         const userId = 'user' in req ? (req.user as { id: string }).id : '';
 
@@ -178,8 +174,8 @@ export const updatePassword = catchAsync(
         }
 
         await UpdateWithNewPassword(user, {
-            newPassword,
-            newConfirmPassword,
+            password,
+            confirmPassword,
         });
 
         res.status(200).json({
