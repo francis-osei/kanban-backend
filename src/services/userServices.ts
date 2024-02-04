@@ -143,3 +143,15 @@ export const findUserById = async (
               })
         | null;
 };
+
+export const updateUserProfile = async (
+    input: Partial<UserInput>,
+    id: string
+): Promise<UserInput | null> => {
+    const user = await UserModel.findByIdAndUpdate({ _id: id }, input, {
+        new: true,
+        runValidators: true,
+    });
+
+    return user;
+};
