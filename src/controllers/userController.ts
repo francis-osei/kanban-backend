@@ -11,6 +11,7 @@ import {
     getUser,
     removeUser,
     updateUser,
+    updateUserProfile,
 } from '../services/userServices';
 import catchAsync from '../utils/catchAsync';
 import AppError from '../utils/appError';
@@ -181,6 +182,29 @@ export const updatePassword = catchAsync(
         res.status(200).json({
             status: 'success',
             message: 'Password update was successful',
+        });
+    }
+);
+
+export const updateUserInfo = catchAsync(
+    async (req: Request, res: Response) => {
+        const { fullName, email, specialization, rank, about } = req.body;
+
+        const userID = 'user' in req ? (req.user as { id: string }).id : '';
+
+        const userData = {
+            fullName,
+            email,
+            specialization,
+            rank,
+            about,
+        };
+
+        await updateUserProfile(userData, userID);
+
+        res.status(200).json({
+            status: 'success',
+            message: 'Profile was update successful',
         });
     }
 );

@@ -9,6 +9,7 @@ import {
     bulkInput,
     removeAllUsers,
     updatePassword,
+    updateUserInfo,
 } from '../controllers/userController';
 import protect from '../middlewares/protect';
 import restrictTo from '../middlewares/restrictTo';
@@ -19,6 +20,7 @@ router.use(protect);
 router.get('/', restrictTo(['admin', 'user']), allUsers);
 router.get('/:id', retrieveUser);
 router.patch('/updatePassword', updatePassword);
+router.patch('/UpdateUserInfo', updateUserInfo);
 
 router.use(restrictTo(['admin']));
 router.post('/new', addUser);
