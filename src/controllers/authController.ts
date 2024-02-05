@@ -17,6 +17,7 @@ import {
     passwordResetToken,
     saveNewPassword,
 } from '../services/passwordServices';
+import { SuccessCodes } from '../utils/statusCode';
 
 export const uploadPhoto = catchAsync(
     async (req: Request, res: Response, next: NextFunction) => {
@@ -36,7 +37,7 @@ export const uploadPhoto = catchAsync(
             quality: 'auto',
         });
 
-        res.status(200).json({
+        res.status(SuccessCodes.ok).json({
             status: 'success',
             data: {
                 image_url: response.secure_url,
@@ -44,8 +45,6 @@ export const uploadPhoto = catchAsync(
         });
     }
 );
-
-
 
 export const login = catchAsync(
     async (req: Request, res: Response, next: NextFunction) => {
@@ -75,7 +74,7 @@ export const login = catchAsync(
         const userId = user._id;
         const token = createToken(userId, res);
 
-        res.status(200).json({
+        res.status(SuccessCodes.ok).json({
             status: 'success',
             token,
             data: { user },
@@ -105,7 +104,7 @@ export const forgotPassword = catchAsync(
             return next(new AppError(response.message, response.statusCode));
         }
 
-        res.status(200).json({
+        res.status(SuccessCodes.ok).json({
             status: 'success',
             message: 'Send reset password instructions to the provided email',
         });
@@ -142,7 +141,7 @@ export const resetPassword = catchAsync(
 
         await saveNewPassword(inputPassword, user);
 
-        res.status(200).json({
+        res.status(SuccessCodes.ok).json({
             status: 'success',
             message: 'Password reset was successful',
         });

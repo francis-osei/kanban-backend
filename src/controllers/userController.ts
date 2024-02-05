@@ -18,6 +18,7 @@ import AppError from '../utils/appError';
 import { UserInput } from '../models/userModel';
 import { sendClaimAccountMail } from '../services/emailServices';
 import { UpdateWithNewPassword } from '../services/passwordServices';
+import { SuccessCodes } from '../utils/statusCode';
 
 export const addUser = catchAsync(
     async (req: Request, res: Response, next: NextFunction) => {
@@ -29,7 +30,7 @@ export const addUser = catchAsync(
             return next(new AppError(response.message, response.statusCode));
         }
 
-        res.status(200).json({
+        res.status(SuccessCodes.ok).json({
             status: 'success',
             data: { user },
         });
@@ -51,7 +52,7 @@ export const deleteUser = catchAsync(
             );
         }
 
-        res.status(200).json({
+        res.status(SuccessCodes.noContent).json({
             status: 'success',
             message: 'User was sccessfully delete',
         });
@@ -68,7 +69,7 @@ export const renewUser = catchAsync(
             return next(new AppError(response.message, response.statusCode));
         }
 
-        res.status(200).json({
+        res.status(SuccessCodes.ok).json({
             status: 'success',
             message: 'Updated user successfully',
         });
@@ -89,7 +90,7 @@ export const allUsers = catchAsync(async (_req: Request, res: Response) => {
 
     const data = isMessage(users) ? users.message : users;
 
-    res.status(200).json({
+    res.status(SuccessCodes.ok).json({
         status: 'success',
         results,
         data,
@@ -106,7 +107,7 @@ export const retrieveUser = catchAsync(
             return next(new AppError(response.message, response.statusCode));
         }
 
-        res.status(200).json({
+        res.status(SuccessCodes.ok).json({
             status: 'success',
             data: { user: response },
         });
@@ -133,7 +134,7 @@ export const bulkInput = catchAsync(
 
         await addBulkUsers(users);
 
-        res.status(200).json({
+        res.status(SuccessCodes.ok).json({
             status: 'success',
             result: usersData.length,
             message: 'Bulk input was successful',
@@ -148,7 +149,7 @@ export const removeAllUsers = catchAsync(
         if (response instanceof AppError)
             return next(new AppError(response.message, response.statusCode));
 
-        res.status(200).json({
+        res.status(SuccessCodes.ok).json({
             status: 'success',
             message: 'All users deleted successfully',
         });
@@ -179,7 +180,7 @@ export const updatePassword = catchAsync(
             confirmPassword,
         });
 
-        res.status(200).json({
+        res.status(SuccessCodes.ok).json({
             status: 'success',
             message: 'Password update was successful',
         });
@@ -202,7 +203,7 @@ export const updateUserInfo = catchAsync(
 
         await updateUserProfile(userData, userID);
 
-        res.status(200).json({
+        res.status(SuccessCodes.ok).json({
             status: 'success',
             message: 'Profile was update successful',
         });

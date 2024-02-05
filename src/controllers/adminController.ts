@@ -4,6 +4,7 @@ import catchAsync from '../utils/catchAsync';
 import AppError from '../utils/appError';
 import { createAdmin } from '../services/adminServices';
 import { sendVerificationMail } from '../services/emailServices';
+import { SuccessCodes } from '../utils/statusCode';
 
 export const registerAdmin = catchAsync(
     async (req: Request, res: Response, next: NextFunction) => {
@@ -21,7 +22,7 @@ export const registerAdmin = catchAsync(
             return next(new AppError(response.message, response.statusCode));
         }
 
-        res.status(201).json({
+        res.status(SuccessCodes.created).json({
             status: 'success',
             message: 'Registration successful. Welcome aboard!',
         });
