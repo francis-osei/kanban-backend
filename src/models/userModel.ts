@@ -15,7 +15,8 @@ export interface UserInput {
     aboutMe: string;
     role: string;
     rank: string;
-    isFirstTimeLogin: boolean;
+    isFirstTimeLogin: boolean | undefined;
+    isPasswordChanged: boolean;
     passwordChangedAt?: Date | number;
     passwordResetToken?: string | null;
     passwordResetExpires: Date | { $gt: Date } | null;
@@ -93,7 +94,8 @@ const userSchema = new mongoose.Schema<UserInput>(
         specialization: { type: String, trim: true, lowerCase: true },
         rank: { type: String, trim: true, lowerCase: true },
         aboutMe: { type: String, trim: true, lowerCase: true },
-        isFirstTimeLogin: { type: Boolean, default: false },
+        isFirstTimeLogin: { type: Boolean, default: false, select: false },
+        isPasswordChanged: { type: Boolean, default: false, select: false },
         passwordChangedAt: Date,
         passwordResetToken: String,
         passwordResetExpires: Date,
@@ -112,6 +114,24 @@ userSchema.pre('save', async function (this: UserDocument, next) {
 
     this.password = hashedPassword;
     this.confirmPassword = undefined;
+
+    next();
+});
+
+userSchema.pre('insertMany', async function (next, docs: UserDocument[]) {
+    await Promise.all(
+        docs.map(async (doc) => {
+            const password = doc.password as string;
+
+            const saltRound: number = Number(process.env.SALT_ROUND) || 0;
+            const generateSalt = await bcrypt.genSalt(saltRound);
+
+            const hashedPassword = bcrypt.hashSync(password, generateSalt);
+
+            doc.password = hashedPassword;
+            doc.confirmPassword = hashedPassword;
+        })
+    );
 
     next();
 });

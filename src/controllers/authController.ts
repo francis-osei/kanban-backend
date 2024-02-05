@@ -1,25 +1,23 @@
-import { NextFunction, Request, Response } from 'express';
 import crypto from 'crypto';
+
+import { NextFunction, Request, Response } from 'express';
 import cloudinary from '../configs/cloundinaryConfig';
 
 import catchAsync from '../utils/catchAsync';
 import AppError from '../utils/appError';
-import {
-    createAdmin,
-    findUserByEmail,
-    findUserByObject,
-    loginUser,
-    passwordResetToken,
-    saveNewPassword,
-} from '../services/userServices';
+import { findUserByEmail, findUserByObject } from '../services/userServices';
 import {
     sendResetPasswordMail,
-    sendVerificationMail,
     sendWelcomeMail,
 } from '../services/emailServices';
 import { UserMethods } from '../models/userModel';
 import { createToken } from '../utils/helpers';
-// import { createToken } from '../utils/helpers';
+import { loginUser } from '../services/authServices';
+import {
+    passwordResetToken,
+    saveNewPassword,
+} from '../services/passwordServices';
+import { SuccessCodes } from '../utils/statusCode';
 
 export const uploadPhoto = catchAsync(
     async (req: Request, res: Response, next: NextFunction) => {
@@ -39,34 +37,11 @@ export const uploadPhoto = catchAsync(
             quality: 'auto',
         });
 
-        res.status(200).json({
+        res.status(SuccessCodes.ok).json({
             status: 'success',
             data: {
                 image_url: response.secure_url,
             },
-        });
-    }
-);
-
-export const registerAdmin = catchAsync(
-    async (req: Request, res: Response, next: NextFunction) => {
-        if (Object.keys(req.body).length === 0) {
-            return next(new AppError('body cannot be empty', 400));
-        }
-
-        const user = await createAdmin(req.body);
-
-        const url = process.env.LOGIN_URL;
-
-        const response = await sendVerificationMail(user, url);
-
-        if (response instanceof AppError) {
-            return next(new AppError(response.message, response.statusCode));
-        }
-
-        res.status(201).json({
-            status: 'success',
-            message: 'Registration successful. Welcome aboard!',
         });
     }
 );
@@ -90,6 +65,7 @@ export const login = catchAsync(
         await user.save({ validateBeforeSave: false });
 
         user.password = undefined;
+        user.isFirstTimeLogin = undefined;
 
         if (response instanceof AppError) {
             return next(new AppError(response.message, response.statusCode));
@@ -98,7 +74,7 @@ export const login = catchAsync(
         const userId = user._id;
         const token = createToken(userId, res);
 
-        res.status(200).json({
+        res.status(SuccessCodes.ok).json({
             status: 'success',
             token,
             data: { user },
@@ -128,7 +104,7 @@ export const forgotPassword = catchAsync(
             return next(new AppError(response.message, response.statusCode));
         }
 
-        res.status(200).json({
+        res.status(SuccessCodes.ok).json({
             status: 'success',
             message: 'Send reset password instructions to the provided email',
         });
@@ -165,7 +141,7 @@ export const resetPassword = catchAsync(
 
         await saveNewPassword(inputPassword, user);
 
-        res.status(200).json({
+        res.status(SuccessCodes.ok).json({
             status: 'success',
             message: 'Password reset was successful',
         });

@@ -1,0 +1,31 @@
+extends baseEmail
+
+block content
+
+    tr
+        td.pb-30
+            p.paragraph Hi #{firstName},
+            p.paragraph
+                | We are delighted to inform you that your account has been 
+                | successfully added to our platform. To get started and claim 
+                | your account, please follow the instructions below:
+
+    tr
+        td.pb-30
+            p.paragraph 
+                | Email: 
+                span.bold #{email}
+            p.paragraph
+                | Temporary Password: 
+                span.bold #{password}
+
+    tr
+        td.pb-30
+            p.paragraph 
+                | Visit our platform login page and enter your provided email
+                | along with the temporary password. Upon successful login, you
+                | will be prompted to create a new password for your account.
+
+    tr
+        td.btn-box(align='center')
+            a.btn(href=`${url}`) Complete Registration

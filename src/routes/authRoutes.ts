@@ -2,12 +2,12 @@ import express from 'express';
 
 import {
     uploadPhoto,
-    registerAdmin,
     login,
     forgotPassword,
     resetPassword,
 } from '../controllers/authController';
 import { photo } from '../middlewares/uploadPhoto';
+import { registerAdmin } from '../controllers/adminController';
 
 const router = express.Router();
 

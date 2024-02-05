@@ -9,11 +9,17 @@ class Email {
     url: string | undefined;
     from: string;
     firstName: string;
+    randomPassword: unknown;
 
-    constructor(user: UserInput, url: string | undefined) {
+    constructor(
+        user: UserInput,
+        url: string | undefined = '',
+        others: Record<string, unknown> = {}
+    ) {
         this.to = user.email;
         this.firstName = user.fullName.split(' ')[0];
         this.url = url;
+        this.randomPassword = others.radnomPassword;
         this.from = `Kanban Team`;
     }
 
@@ -35,6 +41,7 @@ class Email {
                 this.firstName.charAt(0).toUpperCase() +
                 this.firstName.slice(1),
             email: this.to,
+            password: this.randomPassword,
             url: this.url,
             subject,
         });
@@ -62,6 +69,13 @@ class Email {
         await this.send(
             'passwordReset',
             'Reset Your Password (valid for 10 minutes)'
+        );
+    }
+
+    async sendClaimAccount() {
+        await this.send(
+            'claimAccount',
+            'Welcome to Kanban - Set Up Your Account'
         );
     }
 }

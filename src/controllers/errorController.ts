@@ -1,17 +1,24 @@
 import { Request, Response, NextFunction } from 'express';
+
 import AppError from '../utils/appError';
 import logger from '../logger/logs';
+import { ClientErrorCodes, ServerErrorCodes } from '../utils/statusCode';
+
+const handleCastErrorDB = (err: AppError) => {
+    const message = `Invalid ${err.path}: ${err.value}.`;
+    return new AppError(message, ClientErrorCodes.badRequest);
+};
 
 const handleDuplicateFiedsDB = (err: AppError) => {
     const value = err.message!.match(/(["'])(\\?.)*?\1/)?.[0] || null;
     const message = `Duplicate field value: ${value}. Please use another value`;
-    return new AppError(message, 400);
+    return new AppError(message, ClientErrorCodes.badRequest);
 };
 
 const handleValidationErrorDB = (err: AppError) => {
     const error = Object.values(err.errors).map((el) => el.message);
     const message = `Invalid input data. ${error.join('. ')}`;
-    return new AppError(message, 400);
+    return new AppError(message, ClientErrorCodes.badRequest);
 };
 
 const sendErrorProd = (err: AppError, req: Request, res: Response) => {
@@ -25,7 +32,7 @@ const sendErrorProd = (err: AppError, req: Request, res: Response) => {
 
         logger.info(err);
 
-        res.status(500).json({
+        res.status(ServerErrorCodes.internalServerError).json({
             status: 'error',
             message: 'something went wrong!',
         });
@@ -49,7 +56,7 @@ export default (
     res: Response,
     next: NextFunction
 ) => {
-    err.statusCode = err.statusCode || 500;
+    err.statusCode = err.statusCode || ServerErrorCodes.internalServerError;
     err.status = err.status || 'error';
 
     if (process.env.NODE_ENV === 'development') {
@@ -58,6 +65,7 @@ export default (
         let error = { ...err };
         error.message = err.message;
 
+        if (err.name === 'CastError') error = handleCastErrorDB(error);
         if (err.code === 11000) error = handleDuplicateFiedsDB(error);
         if (err.name === 'ValidationError')
             error = handleValidationErrorDB(error);
