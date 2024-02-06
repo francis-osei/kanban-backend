@@ -155,3 +155,9 @@ export const updateUserProfile = async (
 
     return user;
 };
+
+export const findUsersIn = async (userName: string[]) => {
+    const users = await UserModel.find({ fullName: { $in: userName } });
+
+    return users;
+};
