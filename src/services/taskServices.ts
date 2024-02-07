@@ -1,4 +1,6 @@
 import TaskModel, { TasksInput } from '../models/taskModel';
+import AppError from '../utils/appError';
+import { ServerErrorCodes } from '../utils/statusCode';
 
 export const createTask = async (input: TasksInput): Promise<TasksInput> => {
     const newTask = await TaskModel.create(input);
@@ -28,4 +30,19 @@ export const getTask = async (
     }
 
     return tasks;
+};
+
+export const deleteTask = async (
+    taskId: string
+): Promise<boolean | AppError> => {
+    const task = await TaskModel.deleteOne({
+        _id: taskId,
+    });
+
+    if (task.deletedCount) return true;
+
+    return new AppError(
+        'could not delete user',
+        ServerErrorCodes.internalServerError
+    );
 };
