@@ -17,3 +17,15 @@ export const getAllTasks = async (): Promise<
 
     return tasks;
 };
+
+export const getTask = async (
+    taskId: string
+): Promise<TasksInput | { message: string } | null> => {
+    const tasks = await TaskModel.findById(taskId);
+
+    if (tasks === null) {
+        return { message: 'The task id provided does not belong to any task' };
+    }
+
+    return tasks;
+};
