@@ -28,3 +28,11 @@ export const createToken = (userId: string, res: Response) => {
 
     return token;
 };
+
+export const formatDate = (date: string): Date => {
+    const currentTime = new Date();
+    const [year, month, day] = date.split('-').map(Number);
+    currentTime.setFullYear(year, month - 1, day);
+
+    return currentTime;
+};
