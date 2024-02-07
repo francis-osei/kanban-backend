@@ -46,3 +46,15 @@ export const deleteTask = async (
         ServerErrorCodes.internalServerError
     );
 };
+
+export const updateTask = async (
+    input: TasksInput
+): Promise<TasksInput | { message: string } | null> => {
+    const task = await TaskModel.findByIdAndUpdate(input);
+
+    if (task === null) {
+        return { message: 'The task id provided does not belong to any task' };
+    }
+
+    return task;
+};
