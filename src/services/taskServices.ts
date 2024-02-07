@@ -48,9 +48,13 @@ export const deleteTask = async (
 };
 
 export const updateTask = async (
+    taskId: string,
     input: TasksInput
 ): Promise<TasksInput | { message: string } | null> => {
-    const task = await TaskModel.findByIdAndUpdate(input);
+    const task = await TaskModel.findByIdAndUpdate({ _id: taskId }, input, {
+        new: true,
+        runValidators: true,
+    });
 
     if (task === null) {
         return { message: 'The task id provided does not belong to any task' };
