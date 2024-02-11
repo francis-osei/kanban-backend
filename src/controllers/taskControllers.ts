@@ -3,7 +3,7 @@ import { NextFunction, Request, Response } from 'express';
 import catchAsync from '../utils/catchAsync';
 import { SuccessCodes } from '../utils/statusCode';
 import { findUsersIn } from '../services/userServices';
-import { createTask, deleteTask } from '../services/taskServices';
+import { createTask, deleteTask, getAllTasks } from '../services/taskServices';
 import { formatDate } from '../utils/helpers';
 import AppError from '../utils/appError';
 
@@ -11,10 +11,9 @@ export const addTask = catchAsync(async (req: Request, res: Response) => {
     const { assignees, deadline } = req.body;
 
     const users = await findUsersIn(assignees);
-    const assigneesId = users.map((user) => user._id);
     const newTask = {
         ...req.body,
-        assignees: assigneesId,
+        assignees: users,
         deadline: formatDate(deadline),
     };
 
@@ -42,3 +41,12 @@ export const removeTask = catchAsync(
         });
     }
 );
+
+export const allTask = catchAsync(async (_req: Request, res: Response) => {
+    const tasks = await getAllTasks();
+
+    res.status(SuccessCodes.ok).json({
+        status: 'success',
+        data: { tasks },
+    });
+});

@@ -1,4 +1,4 @@
-import mongoose, { Types } from 'mongoose';
+import mongoose, { Types, Query, Document } from 'mongoose';
 
 export interface TasksInput {
     title: string;
@@ -42,10 +42,7 @@ const taskSchema = new mongoose.Schema<TasksInput>(
             required: [true, 'Please provide a title for'],
         },
 
-        assignees: {
-            type: [{ type: mongoose.Schema.ObjectId, ref: 'User' }],
-            required: [true, 'Please provide at least one Assignee'],
-        },
+        assignees: [{ type: mongoose.Schema.ObjectId, ref: 'User' }],
 
         progress: {
             type: Number,
@@ -55,6 +52,18 @@ const taskSchema = new mongoose.Schema<TasksInput>(
         deadline: Date,
     },
     { timestamps: true }
+);
+
+taskSchema.pre(
+    /^find/,
+    function (this: Query<TaskDocument[], TaskDocument>, next) {
+        this.populate({
+            path: 'assignees',
+            select: '-__v -confirmPassword -createdAt -updatedAt -rank -specialization -status -role',
+        });
+
+        next();
+    }
 );
 
 const Task = mongoose.model<TasksInput>('Task', taskSchema);
