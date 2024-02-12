@@ -25,21 +25,21 @@ const taskSchema = new mongoose.Schema<TasksInput>(
             type: String,
             trim: true,
             lowercase: true,
-            required: [true, 'Please provide a title for'],
+            required: [true, 'Please provide a title'],
         },
 
         description: {
             type: String,
             trim: true,
             lowercase: true,
-            required: [true, 'Please provide a title for'],
+            required: [true, 'Please provide a description'],
         },
 
         status: {
             type: String,
             trim: true,
             lowercase: true,
-            required: [true, 'Please provide a title for'],
+            required: [true, 'Please provide a status'],
         },
 
         assignees: [{ type: mongoose.Schema.ObjectId, ref: 'User' }],
