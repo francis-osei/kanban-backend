@@ -3,7 +3,7 @@ import mongoose, { Types, Query, Document } from 'mongoose';
 export interface TasksInput {
     title: string;
     description: string;
-    assignees: Types.ObjectId[] | User[];
+    assignees: Types.ObjectId[] | User[] | undefined;
     deadline: Date;
     status: string;
     progress: number;
@@ -42,7 +42,17 @@ const taskSchema = new mongoose.Schema<TasksInput>(
             required: [true, 'Please provide a status'],
         },
 
-        assignees: [{ type: mongoose.Schema.ObjectId, ref: 'User' }],
+        assignees: {
+            type: [{ type: mongoose.Schema.ObjectId, ref: 'User' }],
+            validate: {
+                validator: function (
+                    value: mongoose.Types.Array<mongoose.Types.ObjectId>
+                ) {
+                    return value && value.length > 0;
+                },
+                message: 'Please provide assignees',
+            },
+        },
 
         progress: {
             type: Number,
