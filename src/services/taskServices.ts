@@ -3,7 +3,10 @@ import AppError from '../utils/appError';
 import { ServerErrorCodes } from '../utils/statusCode';
 
 export const createTask = async (input: TasksInput): Promise<TasksInput> => {
-    const newTask = await TaskModel.create(input);
+    const newTask = await (await TaskModel.create(input)).populate({
+        path: 'assignees',
+        select: '_id photo fullName email',
+    });
 
     return newTask;
 };
