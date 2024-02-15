@@ -23,6 +23,7 @@ const taskSchema = new mongoose.Schema<TasksInput>(
     {
         title: {
             type: String,
+            unique: true,
             trim: true,
             lowercase: true,
             required: [true, 'Please provide a title'],
