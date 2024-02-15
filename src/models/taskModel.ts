@@ -25,6 +25,7 @@ const taskSchema = new mongoose.Schema<TasksInput>(
             type: String,
             unique: true,
             trim: true,
+            maxlength: [255, "Title can't exceed 255 characters"],
             lowercase: true,
             required: [true, 'Please provide a title'],
         },
