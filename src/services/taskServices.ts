@@ -3,7 +3,9 @@ import AppError from '../utils/appError';
 import { ServerErrorCodes } from '../utils/statusCode';
 
 export const createTask = async (input: TasksInput): Promise<TasksInput> => {
-    const newTask = await (await TaskModel.create(input)).populate({
+    const newTask = await (
+        await TaskModel.create(input)
+    ).populate({
         path: 'assignees',
         select: '_id photo fullName email',
     });
@@ -57,7 +59,7 @@ export const updateTask = async (
     const task = await TaskModel.findByIdAndUpdate({ _id: taskId }, input, {
         new: true,
         runValidators: true,
-    });
+    }).select('-createdAt -updatedAt');
 
     if (task === null) {
         return { message: 'The task id provided does not belong to any task' };
