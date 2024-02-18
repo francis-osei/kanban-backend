@@ -16,7 +16,7 @@ interface User {
 export interface TaskDocument extends TasksInput, Document {
     _id: string;
     createdAt: Date;
-    updateAt: Date;
+    updatedAt: Date;
 }
 
 const taskSchema = new mongoose.Schema<TasksInput>(
