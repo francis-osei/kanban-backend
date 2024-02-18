@@ -7,6 +7,7 @@ import {
     createTask,
     deleteTask,
     getAllTasks,
+    getTask,
     updateTask,
 } from '../services/taskServices';
 import { formatDate } from '../utils/helpers';
@@ -68,6 +69,17 @@ export const renewTask = catchAsync(async (req: Request, res: Response) => {
     };
 
     const task = await updateTask(id, updatedTask);
+
+    res.status(SuccessCodes.ok).json({
+        status: 'success',
+        data: task,
+    });
+});
+
+export const retrieveTask = catchAsync(async (req: Request, res: Response) => {
+    const { id } = req.params;
+
+    const task = await getTask(id);
 
     res.status(SuccessCodes.ok).json({
         status: 'success',
