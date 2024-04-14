@@ -7,6 +7,7 @@ import mongoSanitize from 'express-mongo-sanitize';
 
 import authRouter from './routes/authRoutes';
 import userRouter from './routes/userRoutes';
+import tasksRouter from './routes/taskRoutes';
 import globalErrorHandler from './controllers/errorController';
 import logger from './logger/logs';
 import AppError from './utils/appError';
@@ -35,6 +36,7 @@ app.get('/', (_req: Request, res: Response) => {
 
 app.use('/api', authRouter);
 app.use('/api/users', userRouter);
+app.use('/api/tasks', tasksRouter);
 
 app.all('*', (req: Request, _res: Response, next: NextFunction) => {
     next(new AppError(`can't find ${req.originalUrl} on this server`, 404));
