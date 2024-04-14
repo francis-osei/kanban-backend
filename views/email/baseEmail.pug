@@ -1,0 +1,42 @@
+doctype
+html
+  head
+    meta(http-equiv='Content-Type', content='text/html; charset=utf-8')
+    meta(name='viewport', content='width=device-width, initial-scale=1.0')
+    link(rel='stylesheet', href='style.css')
+    link(rel='preconnect', href='https://fonts.googleapis.com')
+    link(rel='preconnect', href='https://fonts.gstatic.com', crossorigin='')
+    link(href='https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap', rel='stylesheet')
+    title= subject
+    
+    // STYLE
+    include _style
+
+  body
+    table.main(role='presentation')
+      tbody
+        tr
+          td.ptb-50(align='center')
+            table.message-container(role='presentation')
+              tbody.x-small-d.message-content
+                tr
+                  td.pb-47
+                    img(src='https://res.cloudinary.com/drudinjd8/image/upload/v1704446185/kanban/av8di3ig6oj2npwqpzwa.png', alt='kanban-logo', width='152.53px')
+                tr
+                  td
+                    table.message-email(role='presentation')
+                      tbody
+
+                        //- CONTENT
+                        block content
+
+                //- FOOTER
+                tr
+                  td
+                    p.paragraph-small.mb-38
+                      | This email was sent to
+                      span.email &nbsp;#{email}
+                      | . If you&apos;d rather not receive this kind of email, you can
+                      span.link
+                        | &nbsp;unsubscribe or manage your email preferences.
+                    p.paragraph-small &copy; 2023 Kanban.
