@@ -1,5 +1,4 @@
 import crypto from 'crypto';
-
 import { NextFunction, Request, Response } from 'express';
 
 import {
@@ -18,20 +17,20 @@ import AppError from '../utils/appError';
 import { UserInput } from '../models/userModel';
 import { sendClaimAccountMail } from '../services/emailServices';
 import { UpdateWithNewPassword } from '../services/passwordServices';
-import { SuccessCodes } from '../utils/statusCode';
+import { STATUS_RESPONSE, SUCCESS_CODE } from '../constants/status';
 
 export const addUser = catchAsync(
     async (req: Request, res: Response, next: NextFunction) => {
         const { user, radnomPassword } = await addNewUser(req.body);
-        radnomPassword;
+
         const response = sendClaimAccountMail(user, radnomPassword);
 
         if (response instanceof AppError) {
             return next(new AppError(response.message, response.statusCode));
         }
 
-        res.status(SuccessCodes.ok).json({
-            status: 'success',
+        res.status(SUCCESS_CODE.OK).json({
+            status: STATUS_RESPONSE.SUCCESS,
             data: { user },
         });
     }
@@ -52,8 +51,8 @@ export const deleteUser = catchAsync(
             );
         }
 
-        res.status(SuccessCodes.noContent).json({
-            status: 'success',
+        res.status(SUCCESS_CODE.NO_CONTENT).json({
+            status: STATUS_RESPONSE.SUCCESS,
             message: 'User was sccessfully delete',
         });
     }
@@ -69,8 +68,8 @@ export const renewUser = catchAsync(
             return next(new AppError(response.message, response.statusCode));
         }
 
-        res.status(SuccessCodes.ok).json({
-            status: 'success',
+        res.status(SUCCESS_CODE.OK).json({
+            status: STATUS_RESPONSE.SUCCESS,
             message: 'Updated user successfully',
         });
     }
@@ -90,8 +89,8 @@ export const allUsers = catchAsync(async (_req: Request, res: Response) => {
 
     const data = isMessage(users) ? users.message : users;
 
-    res.status(SuccessCodes.ok).json({
-        status: 'success',
+    res.status(SUCCESS_CODE.OK).json({
+        status: STATUS_RESPONSE.SUCCESS,
         results,
         data,
     });
@@ -107,8 +106,8 @@ export const retrieveUser = catchAsync(
             return next(new AppError(response.message, response.statusCode));
         }
 
-        res.status(SuccessCodes.ok).json({
-            status: 'success',
+        res.status(SUCCESS_CODE.OK).json({
+            status: STATUS_RESPONSE.SUCCESS,
             data: { user: response },
         });
     }
@@ -134,8 +133,8 @@ export const bulkInput = catchAsync(
 
         await addBulkUsers(users);
 
-        res.status(SuccessCodes.ok).json({
-            status: 'success',
+        res.status(SUCCESS_CODE.OK).json({
+            status: STATUS_RESPONSE.SUCCESS,
             result: usersData.length,
             message: 'Bulk input was successful',
         });
@@ -149,8 +148,8 @@ export const removeAllUsers = catchAsync(
         if (response instanceof AppError)
             return next(new AppError(response.message, response.statusCode));
 
-        res.status(SuccessCodes.ok).json({
-            status: 'success',
+        res.status(SUCCESS_CODE.OK).json({
+            status: STATUS_RESPONSE.SUCCESS,
             message: 'All users deleted successfully',
         });
     }
@@ -180,8 +179,8 @@ export const updatePassword = catchAsync(
             confirmPassword,
         });
 
-        res.status(SuccessCodes.ok).json({
-            status: 'success',
+        res.status(SUCCESS_CODE.OK).json({
+            status: STATUS_RESPONSE.SUCCESS,
             message: 'Password update was successful',
         });
     }
@@ -203,8 +202,8 @@ export const updateUserInfo = catchAsync(
 
         await updateUserProfile(userData, userID);
 
-        res.status(SuccessCodes.ok).json({
-            status: 'success',
+        res.status(SUCCESS_CODE.OK).json({
+            status: STATUS_RESPONSE.SUCCESS,
             message: 'Profile was update successful',
         });
     }
