@@ -2,23 +2,23 @@ import { Request, Response, NextFunction } from 'express';
 
 import AppError from '../utils/appError';
 import logger from '../logger/logs';
-import { ClientErrorCodes, ServerErrorCodes } from '../utils/statusCode';
+import { CLIENT_ERROR_CODE, SERVER_ERROR_CODES } from '../constants/status';
 
 const handleCastErrorDB = (err: AppError) => {
     const message = `Invalid ${err.path}: ${err.value}.`;
-    return new AppError(message, ClientErrorCodes.badRequest);
+    return new AppError(message, CLIENT_ERROR_CODE.BAD_REQUEST);
 };
 
 const handleDuplicateFiedsDB = (err: AppError) => {
     const value = err.message!.match(/(["'])(\\?.)*?\1/)?.[0] || null;
     const message = `Duplicate field value: ${value}. Please use another value`;
-    return new AppError(message, ClientErrorCodes.badRequest);
+    return new AppError(message, CLIENT_ERROR_CODE.BAD_REQUEST);
 };
 
 const handleValidationErrorDB = (err: AppError) => {
     const error = Object.values(err.errors).map((el) => el.message);
     const message = `Invalid input data. ${error.join('. ')}`;
-    return new AppError(message, ClientErrorCodes.badRequest);
+    return new AppError(message, CLIENT_ERROR_CODE.BAD_REQUEST);
 };
 
 const sendErrorProd = (err: AppError, req: Request, res: Response) => {
@@ -32,7 +32,7 @@ const sendErrorProd = (err: AppError, req: Request, res: Response) => {
 
         logger.info(err);
 
-        res.status(ServerErrorCodes.internalServerError).json({
+        res.status(SERVER_ERROR_CODES.INTERNAL_SERVER_ERROR).json({
             status: 'error',
             message: 'something went wrong!',
         });
@@ -56,7 +56,7 @@ export default (
     res: Response,
     next: NextFunction
 ) => {
-    err.statusCode = err.statusCode || ServerErrorCodes.internalServerError;
+    err.statusCode = err.statusCode || SERVER_ERROR_CODES.INTERNAL_SERVER_ERROR;
     err.status = err.status || 'error';
 
     if (process.env.NODE_ENV === 'development') {

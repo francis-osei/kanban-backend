@@ -5,7 +5,7 @@ declare global {
             SERVER_PORT: string;
             NODE_ENV: 'production' | 'development' | 'staging';
             INITIAL_lECT_NUMB: string;
-            SALT_ROUND: number;
+            SALT_ROUND: string;
             DATABASE: string;
             DATABASE_PASSWORD: string;
             JWT_SECRET: string;
