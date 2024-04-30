@@ -1,7 +1,6 @@
 import { Request, Response, NextFunction } from 'express';
 
 import AppError from '../utils/appError';
-import logger from '../logger/logs';
 import { CLIENT_ERROR_CODE, SERVER_ERROR_CODES } from '../constants/status';
 
 const handleCastErrorDB = (err: AppError) => {
@@ -30,7 +29,6 @@ const sendErrorProd = (err: AppError, req: Request, res: Response) => {
             });
         }
 
-        logger.info(err);
 
         res.status(SERVER_ERROR_CODES.INTERNAL_SERVER_ERROR).json({
             status: 'error',

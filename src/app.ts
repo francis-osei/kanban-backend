@@ -9,7 +9,7 @@ import authRouter from './routes/authRoutes';
 import userRouter from './routes/userRoutes';
 import tasksRouter from './routes/taskRoutes';
 import globalErrorHandler from './controllers/errorController';
-import logger from './logger/logs';
+
 import AppError from './utils/appError';
 
 const app = express();
@@ -26,7 +26,7 @@ app.use(cookieParser());
 app.use(mongoSanitize());
 
 if (process.env.NODE_ENV === 'development') {
-    logger.info(process.env.NODE_ENV);
+
     app.use(morgan('dev'));
 }
 
