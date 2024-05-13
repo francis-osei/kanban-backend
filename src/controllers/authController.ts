@@ -18,6 +18,7 @@ import {
     saveNewPassword,
 } from '../services/passwordServices';
 import { STATUS_RESPONSE, SUCCESS_CODE } from '../constants/status';
+import { AuthenticatedRequest } from '../middlewares/protect';
 
 export const uploadPhoto = catchAsync(
     async (req: Request, res: Response, next: NextFunction) => {
@@ -61,7 +62,7 @@ export const login = catchAsync(
             response = await sendWelcomeMail(user);
         }
 
-        user.isAuthenticated=true
+        user.isAuthenticated = true;
         user.isFirstTimeLogin = true;
         await user.save({ validateBeforeSave: false });
 
@@ -145,6 +146,37 @@ export const resetPassword = catchAsync(
         res.status(SUCCESS_CODE.OK).json({
             status: STATUS_RESPONSE.SUCCESS,
             message: 'Password reset was successful',
+        });
+    }
+);
+
+export const logout = catchAsync(
+    async (
+        req: Request | AuthenticatedRequest,
+        res: Response,
+        next: NextFunction
+    ) => {
+        const currentUser = (req as AuthenticatedRequest).user;
+        const userObject = { email: currentUser.email };
+        const user = await findUserByObject(userObject);
+
+        if (user instanceof AppError) {
+            return next(new AppError(user.message, user.statusCode));
+        }
+
+        user.isAuthenticated = false;
+        await user.save({ validateBeforeSave: false });
+
+        res.cookie('jwt', 'loggedout', {
+            expires: new Date(0),
+            httpOnly: true,
+            secure: process.env.NODE_ENV === 'production',
+            sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
+        });
+
+        res.status(200).json({
+            status: 'success',
+            message: 'Logged out successfully',
         });
     }
 );
