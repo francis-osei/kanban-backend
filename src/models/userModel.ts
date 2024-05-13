@@ -15,6 +15,7 @@ export interface UserInput {
     aboutMe: string;
     role: string;
     rank: string;
+    isAuthenticated: boolean;
     isFirstTimeLogin: boolean | undefined;
     isPasswordChanged: boolean;
     passwordChangedAt?: Date | number;
@@ -96,6 +97,7 @@ const userSchema = new mongoose.Schema<UserInput>(
         aboutMe: { type: String, trim: true, lowerCase: true },
         isFirstTimeLogin: { type: Boolean, default: false, select: false },
         isPasswordChanged: { type: Boolean, default: false, select: false },
+        isAuthenticated: { type:Boolean, default: false },
         passwordChangedAt: Date,
         passwordResetToken: String,
         passwordResetExpires: Date,

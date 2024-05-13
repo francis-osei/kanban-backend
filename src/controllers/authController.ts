@@ -61,6 +61,7 @@ export const login = catchAsync(
             response = await sendWelcomeMail(user);
         }
 
+        user.isAuthenticated=true
         user.isFirstTimeLogin = true;
         await user.save({ validateBeforeSave: false });
 
