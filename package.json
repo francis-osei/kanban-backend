@@ -6,6 +6,7 @@
     "scripts": {
         "dev": "nodemon src/server.ts",
         "build": "tsc -p .",
+        "vercel-build": "echo hello",
         "lint": "npx eslint --ext .ts src",
         "lint:fix": "npx eslint --ext .ts src --fix",
         "prettier": "npx prettier src --check",

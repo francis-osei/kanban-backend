@@ -14,15 +14,16 @@ export const createToken = (userId: string, res: Response) => {
         expires: Date;
         httpOnly: boolean;
         secure?: boolean;
+        sameSite: 'strict' | 'lax' | 'none';
     } = {
         expires: new Date(
             Date.now() +
                 Number(process.env.JWT_COOKIE_EXPIRES_IN) * 24 * 60 * 69 * 1000
         ),
         httpOnly: true,
+        secure: process.env.NODE_ENV === 'production',
+        sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
     };
-
-    if (process.env.NODE_ENV === 'production') cookieOption.secure = true;
 
     res.cookie('jwt', token, cookieOption);
 

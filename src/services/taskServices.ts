@@ -1,6 +1,6 @@
+import { SERVER_ERROR_CODES } from '../constants/status';
 import TaskModel, { TasksInput } from '../models/taskModel';
 import AppError from '../utils/appError';
-import { ServerErrorCodes } from '../utils/statusCode';
 
 export const createTask = async (input: TasksInput): Promise<TasksInput> => {
     const newTask = await (
@@ -48,7 +48,7 @@ export const deleteTask = async (
 
     return new AppError(
         'could not delete user',
-        ServerErrorCodes.internalServerError
+        SERVER_ERROR_CODES.INTERNAL_SERVER_ERROR
     );
 };
 

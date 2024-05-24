@@ -17,7 +17,8 @@ import {
     passwordResetToken,
     saveNewPassword,
 } from '../services/passwordServices';
-import { SuccessCodes } from '../utils/statusCode';
+import { STATUS_RESPONSE, SUCCESS_CODE } from '../constants/status';
+import { AuthenticatedRequest } from '../middlewares/protect';
 
 export const uploadPhoto = catchAsync(
     async (req: Request, res: Response, next: NextFunction) => {
@@ -37,8 +38,8 @@ export const uploadPhoto = catchAsync(
             quality: 'auto',
         });
 
-        res.status(SuccessCodes.ok).json({
-            status: 'success',
+        res.status(SUCCESS_CODE.OK).json({
+            status: STATUS_RESPONSE.SUCCESS,
             data: {
                 image_url: response.secure_url,
             },
@@ -61,6 +62,7 @@ export const login = catchAsync(
             response = await sendWelcomeMail(user);
         }
 
+        user.isAuthenticated = true;
         user.isFirstTimeLogin = true;
         await user.save({ validateBeforeSave: false });
 
@@ -74,8 +76,8 @@ export const login = catchAsync(
         const userId = user._id;
         const token = createToken(userId, res);
 
-        res.status(SuccessCodes.ok).json({
-            status: 'success',
+        res.status(SUCCESS_CODE.OK).json({
+            status: STATUS_RESPONSE.SUCCESS,
             token,
             data: { user },
         });
@@ -104,8 +106,8 @@ export const forgotPassword = catchAsync(
             return next(new AppError(response.message, response.statusCode));
         }
 
-        res.status(SuccessCodes.ok).json({
-            status: 'success',
+        res.status(SUCCESS_CODE.OK).json({
+            status: STATUS_RESPONSE.SUCCESS,
             message: 'Send reset password instructions to the provided email',
         });
     }
@@ -141,9 +143,40 @@ export const resetPassword = catchAsync(
 
         await saveNewPassword(inputPassword, user);
 
-        res.status(SuccessCodes.ok).json({
-            status: 'success',
+        res.status(SUCCESS_CODE.OK).json({
+            status: STATUS_RESPONSE.SUCCESS,
             message: 'Password reset was successful',
+        });
+    }
+);
+
+export const logout = catchAsync(
+    async (
+        req: Request | AuthenticatedRequest,
+        res: Response,
+        next: NextFunction
+    ) => {
+        const currentUser = (req as AuthenticatedRequest).user;
+        const userObject = { email: currentUser.email };
+        const user = await findUserByObject(userObject);
+
+        if (user instanceof AppError) {
+            return next(new AppError(user.message, user.statusCode));
+        }
+
+        user.isAuthenticated = false;
+        await user.save({ validateBeforeSave: false });
+
+        res.cookie('jwt', 'loggedout', {
+            expires: new Date(0),
+            httpOnly: true,
+            secure: process.env.NODE_ENV === 'production',
+            sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
+        });
+
+        res.status(200).json({
+            status: 'success',
+            message: 'Logged out successfully',
         });
     }
 );
