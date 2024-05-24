@@ -1,7 +1,6 @@
 import { NextFunction, Request, Response } from 'express';
 
 import catchAsync from '../utils/catchAsync';
-import { SuccessCodes } from '../utils/statusCode';
 import { findUsersIn } from '../services/userServices';
 import {
     createTask,
@@ -12,6 +11,7 @@ import {
 } from '../services/taskServices';
 import { formatDate } from '../utils/helpers';
 import AppError from '../utils/appError';
+import { STATUS_RESPONSE, SUCCESS_CODE } from '../constants/status';
 
 export const addTask = catchAsync(async (req: Request, res: Response) => {
     const { assignees, deadline } = req.body;
@@ -25,8 +25,8 @@ export const addTask = catchAsync(async (req: Request, res: Response) => {
 
     const task = await createTask(newTask);
 
-    res.status(SuccessCodes.ok).json({
-        status: 'success',
+    res.status(SUCCESS_CODE.OK).json({
+        status: STATUS_RESPONSE.SUCCESS,
         data: { task },
     });
 });
@@ -41,8 +41,8 @@ export const removeTask = catchAsync(
             return next(new AppError(response.message, response.statusCode));
         }
 
-        res.status(SuccessCodes.noContent).json({
-            status: 'success',
+        res.status(SUCCESS_CODE.NO_CONTENT).json({
+            status: STATUS_RESPONSE.SUCCESS,
             message: 'Task was deleted successfully',
         });
     }
@@ -51,8 +51,8 @@ export const removeTask = catchAsync(
 export const allTask = catchAsync(async (_req: Request, res: Response) => {
     const tasks = await getAllTasks();
 
-    res.status(SuccessCodes.ok).json({
-        status: 'success',
+    res.status(SUCCESS_CODE.OK).json({
+        status: STATUS_RESPONSE.SUCCESS,
         data: { tasks },
     });
 });
@@ -70,8 +70,8 @@ export const renewTask = catchAsync(async (req: Request, res: Response) => {
 
     const task = await updateTask(id, updatedTask);
 
-    res.status(SuccessCodes.ok).json({
-        status: 'success',
+    res.status(SUCCESS_CODE.OK).json({
+        status: STATUS_RESPONSE.SUCCESS,
         data: task,
     });
 });
@@ -81,8 +81,8 @@ export const retrieveTask = catchAsync(async (req: Request, res: Response) => {
 
     const task = await getTask(id);
 
-    res.status(SuccessCodes.ok).json({
-        status: 'success',
+    res.status(SUCCESS_CODE.OK).json({
+        status: STATUS_RESPONSE.SUCCESS,
         data: task,
     });
 });

@@ -6,7 +6,7 @@ import jwt, { JwtPayload } from 'jsonwebtoken';
 import UserModel, { UserInput } from '../models/userModel';
 import { RequestWithUser } from '../middlewares/restrictTo';
 
-interface AuthenticatedRequest extends Request {
+export interface AuthenticatedRequest extends Request {
     user: UserInput;
 }
 
@@ -25,7 +25,7 @@ const protect = catchAsync(
         } else if (req.cookies.jwt) {
             token = req.cookies.jwt;
         }
-        
+
         if (!token) {
             return next(
                 new AppError("You don't pemission to perfom this action", 403)
@@ -38,6 +38,11 @@ const protect = catchAsync(
         ) as JwtPayload;
 
         const currentUser = await UserModel.findById(decode.id);
+        
+        if (!currentUser?.isAuthenticated) {
+            return next(new AppError('User is not authenticated', 401));
+        }
+
         if (!currentUser) {
             return next(
                 new AppError(

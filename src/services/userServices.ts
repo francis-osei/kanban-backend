@@ -1,8 +1,9 @@
+import { Document, Types } from 'mongoose';
 import crypto from 'crypto';
 
 import UserModel, { UserInput, UserMethods } from '../models/userModel';
 import AppError from '../utils/appError';
-import { Document, Types } from 'mongoose';
+import { CLIENT_ERROR_CODE, SERVER_ERROR_CODES } from '../constants/status';
 
 export const findUserByEmail = async (
     email: string
@@ -10,7 +11,10 @@ export const findUserByEmail = async (
     const user: UserMethods | null = await UserModel.findOne({ email });
 
     if (!user) {
-        return new AppError('There is no user with the email address', 404);
+        return new AppError(
+            'There is no user with the email address',
+            CLIENT_ERROR_CODE.NOT_FOUND
+        );
     }
 
     return user;
@@ -19,7 +23,11 @@ export const findUserByEmail = async (
 export const findUserByObject = async (query: Partial<UserInput>) => {
     const user = await UserModel.findOne(query);
 
-    if (!user) return new AppError('Token is invalid or has expired', 400);
+    if (!user)
+        return new AppError(
+            'Token is invalid or has expired',
+            CLIENT_ERROR_CODE.BAD_REQUEST
+        );
 
     return user;
 };
@@ -44,7 +52,10 @@ export const removeUser = async (id: string): Promise<boolean | AppError> => {
 
     if (user.deletedCount) return true;
 
-    return new AppError('could not delete user', 500);
+    return new AppError(
+        'could not delete user',
+        SERVER_ERROR_CODES.INTERNAL_SERVER_ERROR
+    );
 };
 
 export const updateUser = async (
@@ -54,7 +65,7 @@ export const updateUser = async (
     const currentUser = await UserModel.findOne({ _id: userId, role: 'user' });
 
     if (currentUser === null) {
-        return new AppError('User not found', 404);
+        return new AppError('User not found', CLIENT_ERROR_CODE.NOT_FOUND);
     }
 
     const update = {
@@ -98,7 +109,7 @@ export const getUser = async (
     );
 
     if (user === null) {
-        return new AppError('User not found', 404);
+        return new AppError('User not found', CLIENT_ERROR_CODE.NOT_FOUND);
     }
 
     return user;
@@ -115,7 +126,10 @@ export const deleteAllUsers = async () => {
 
     if (deleteUsers.deletedCount) return true;
 
-    return new AppError('There are no users to be deleted', 500);
+    return new AppError(
+        'There are no users to be deleted',
+        SERVER_ERROR_CODES.INTERNAL_SERVER_ERROR
+    );
 };
 
 export const findUserById = async (

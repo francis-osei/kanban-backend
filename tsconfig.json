@@ -17,7 +17,7 @@
         "noUnusedParameters": true,
         "noUnusedLocals": true
     },
-    "include": ["src/**/*","./global.d.ts"],
+    "include": ["src/**/*", "./global.d.ts", "/api/*.ts"],
     "exclude": ["node_modules"],
     "typeRoots": ["./global.d.ts", "./node_modules/@types"]
 }
