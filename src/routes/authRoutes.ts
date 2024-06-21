@@ -6,10 +6,12 @@ import {
     forgotPassword,
     resetPassword,
     logout,
+    getCurrentUser,
 } from '../controllers/authController';
 import { photo } from '../middlewares/uploadPhoto';
 import { registerAdmin } from '../controllers/adminController';
 import protect from '../middlewares/protect';
+
 
 const router = express.Router();
 
@@ -21,5 +23,6 @@ router.post('/auth/resetPassword/:token', resetPassword);
 
 router.use(protect)
 router.get('/auth/logout', logout);
+router.get('/auth/me', getCurrentUser);
 
 export default router;
