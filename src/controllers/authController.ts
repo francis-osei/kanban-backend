@@ -180,3 +180,15 @@ export const logout = catchAsync(
         });
     }
 );
+
+export const getCurrentUser = catchAsync(
+    async (req: Request | AuthenticatedRequest, res: Response) => {
+        const currentUser = (req as AuthenticatedRequest).user;
+
+
+        res.status(200).json({
+            status: 'success',
+            data: currentUser,
+        });
+    }
+);
