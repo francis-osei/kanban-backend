@@ -17,7 +17,11 @@ import AppError from '../utils/appError';
 import { UserInput } from '../models/userModel';
 import { sendClaimAccountMail } from '../services/emailServices';
 import { UpdateWithNewPassword } from '../services/passwordServices';
-import { STATUS_RESPONSE, SUCCESS_CODE } from '../constants/status';
+import {
+    CLIENT_ERROR_CODE,
+    STATUS_RESPONSE,
+    SUCCESS_CODE,
+} from '../constants/status';
 
 export const addUser = catchAsync(
     async (req: Request, res: Response, next: NextFunction) => {
@@ -205,6 +209,38 @@ export const updateUserInfo = catchAsync(
         res.status(SUCCESS_CODE.OK).json({
             status: STATUS_RESPONSE.SUCCESS,
             message: 'Profile was update successful',
+        });
+    }
+);
+
+export const updateUserStatus = catchAsync(
+    async (req: Request, res: Response, next: NextFunction) => {
+        const userId = req.params.id;
+
+        const user = await findUserById(userId);
+
+        if (!user) {
+            return next(
+                new AppError('User not found', CLIENT_ERROR_CODE.NOT_FOUND)
+            );
+        }
+
+        if (user.status === req.body.status) {
+            return next(
+                new AppError(
+                    `Could not update user status. User status is already "${req.body.status}"`,
+                    CLIENT_ERROR_CODE.BAD_REQUEST
+                )
+            );
+        }
+
+        user.status = req.body.status;
+        await user.save({ validateModifiedOnly: true });
+
+        res.status(SUCCESS_CODE.OK).json({
+            status: STATUS_RESPONSE.SUCCESS,
+            message: 'User status updated',
+            data: user,
         });
     }
 );

@@ -10,6 +10,7 @@ import {
     removeAllUsers,
     updatePassword,
     updateUserInfo,
+    updateUserStatus,
 } from '../controllers/userController';
 import protect from '../middlewares/protect';
 import restrictTo from '../middlewares/restrictTo';
@@ -28,5 +29,6 @@ router.post('/bulk', bulkInput);
 router.delete('/removeAllUsers', removeAllUsers);
 router.delete('/:id', deleteUser);
 router.patch('/:id', renewUser);
+router.patch('/:id/status', updateUserStatus);
 
 export default router;
