@@ -9,6 +9,7 @@ import globalErrorHandler from './controllers/errorController';
 import handleUndefinedRoutes from './middlewares/handleUndefinedRoutes';
 import KanbanApp from './routes/kanban.api';
 import database, { getDB_url } from './configs/database';
+import swagger from './configs/swagger';
 
 const api = (): Express => {
     const app = express();
@@ -27,6 +28,8 @@ const api = (): Express => {
 
     const DB_url = getDB_url();
     database.connect(DB_url);
+
+    swagger(app);
 
     KanbanApp(app);
 

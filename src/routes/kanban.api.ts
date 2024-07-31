@@ -5,7 +5,8 @@ import tasksRouter from './authRoutes';
 
 const routes = (app: Application) => {
     app.get('/', (_req: Request, res: Response) => {
-        res.send('Express server running');
+        // res.send('Express server running');
+        res.redirect('/api/docs');
     });
     app.use('/api', authRouter);
     app.use('/api/users', userRouter);
