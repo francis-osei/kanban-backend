@@ -1,0 +1,26 @@
+version: '3'
+
+services:
+    kanban-api:
+        build:
+            context: .
+            # target: development
+            args:
+                NODE_ENV: development
+        volumes:
+            - ./:/app
+            - /app/node_modules
+        environment:
+            - NODE_ENV=development
+            - DB_USER=$MONGO_USER
+            - DB_PASSWORD=$MONGO_PASSWORD
+        env_file:
+            - ./.env
+        command: yarn dev
+
+
+    mongodb:
+        image: mongo:latest
+        environment:
+            - MONGO_INITDB_ROOT_USERNAME=$MONGO_USER
+            - MONGO_INITDB_ROOT_PASSWORD=$MONGO_PASSWORD
